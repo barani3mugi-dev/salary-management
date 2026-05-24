@@ -3,6 +3,7 @@ import { InsightsService } from './insights.service';
 import { SuccessResponse } from '../../utils/http_response';
 import { CountryInsight, DepartmentInsight, JobTitleInsight } from './interfaces/insights.interface';
 import { Employee } from '../employee/employee.entity';
+import { successResponse } from '../../common/helpers/response.helper';
 
 @Controller('api/v1/insights')
 export class InsightsController {
@@ -13,12 +14,7 @@ export class InsightsController {
     @Param('country') country: string,
   ): Promise<SuccessResponse<CountryInsight>> {
     const data = await this.insightsService.getCountryInsights(country);
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'Country insights fetched successfully',
-      error: null,
-      data,
-    };
+   return successResponse(data, 'Country insights fetched successfully');
   }
 
   @Get('job-title')
@@ -27,12 +23,7 @@ export class InsightsController {
     @Query('country') country: string,
   ): Promise<SuccessResponse<JobTitleInsight>> {
     const data = await this.insightsService.getJobTitleInsights(title, country);
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'Job title insights fetched successfully',
-      error: null,
-      data,
-    };
+    return successResponse(data, 'Job title insights fetched successfully');
   }
 
   @Get('department')
@@ -40,12 +31,7 @@ export class InsightsController {
     @Query('country') country: string,
   ): Promise<SuccessResponse<DepartmentInsight[]>> {
     const data = await this.insightsService.getDepartmentInsights(country);
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'Department insights fetched successfully',
-      error: null,
-      data,
-    };
+    return successResponse(data, 'Department insights fetched successfully');
   }
 
   @Get('top-earners')
@@ -54,11 +40,6 @@ export class InsightsController {
     @Query('limit') limit: string = '5',
   ): Promise<SuccessResponse<Employee[]>> {
     const data = await this.insightsService.getTopEarners(country, +limit);
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'Top earners fetched successfully',
-      error: null,
-      data,
-    };
+    return successResponse(data, 'Top earners fetched successfully');
   }
 }

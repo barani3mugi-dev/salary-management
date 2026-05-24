@@ -3,12 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { Employee } from '../employee/employee.entity';
-import { CustomException } from '../../utils/http_response';
 import {
     CountryInsight,
     JobTitleInsight,
     DepartmentInsight,
 } from './interfaces/insights.interface';
+import { toFloat, toInt } from '../../common/helpers/number.helper';
+import { handleServiceError } from '../../common/helpers/error.helper';
 
 @Injectable()
 export class InsightsService {
@@ -34,18 +35,13 @@ export class InsightsService {
 
             return {
                 country,
-                min_salary: parseFloat(result.min) || 0,
-                max_salary: parseFloat(result.max) || 0,
-                avg_salary: parseFloat(result.avg) || 0,
-                employee_count: parseInt(result.count) || 0,
+                min_salary: toFloat(result.min),
+                max_salary: toFloat(result.max),
+                avg_salary: toFloat(result.avg),
+                employee_count: toInt(result.count),
             };
         } catch (error) {
-            this.logger.error({ err: error, country }, 'Failed to fetch country insights');
-            throw new CustomException(
-                'Failed to fetch country insights',
-                'Internal Server Error',
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
+            handleServiceError(error, this.logger, { country }, 'Failed to fetch country insights');
         }
     }
 
@@ -71,15 +67,7 @@ export class InsightsService {
                 employee_count: parseInt(result.count) || 0,
             };
         } catch (error) {
-            this.logger.error(
-                { err: error, title, country },
-                'Failed to fetch job title insights',
-            );
-            throw new CustomException(
-                'Failed to fetch job title insights',
-                'Internal Server Error',
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
+            handleServiceError(error, this.logger, { title, country }, 'Failed to fetch job title insights');
         }
     }
 
@@ -102,15 +90,7 @@ export class InsightsService {
                 employee_count: parseInt(row.count) || 0,
             }));
         } catch (error) {
-            this.logger.error(
-                { err: error, country },
-                'Failed to fetch department insights',
-            );
-            throw new CustomException(
-                'Failed to fetch department insights',
-                'Internal Server Error',
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
+            handleServiceError(error, this.logger, { country }, 'Failed to fetch department insights');
         }
     }
 
@@ -129,15 +109,7 @@ export class InsightsService {
             this.logger.info({ country, limit }, 'Fetched top earners');
             return result;
         } catch (error) {
-            this.logger.error(
-                { err: error, country },
-                'Failed to fetch top earners',
-            );
-            throw new CustomException(
-                'Failed to fetch top earners',
-                'Internal Server Error',
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
+            handleServiceError(error, this.logger, { country, limit }, 'Failed to fetch top earners');
         }
     }
 }

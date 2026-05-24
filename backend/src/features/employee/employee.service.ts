@@ -7,6 +7,7 @@ import { CreateEmployeeDto } from './dto/create_employee.dto';
 import { UpdateEmployeeDto } from './dto/update_employee.dto';
 import { EmployeeQueryDto } from './dto/employee_query.dto';
 import { CustomException } from '../../utils/http_response';
+import { handleServiceError } from '../../common/helpers/error.helper';
 
 @Injectable()
 export class EmployeeService {
@@ -24,12 +25,7 @@ export class EmployeeService {
             const employee = this.repo.create(dto);
             return await this.repo.save(employee);
         } catch (error) {
-            this.logger.error({ err: error, full_name: dto.full_name }, 'Failed to create employee');
-            throw new CustomException(
-                'Failed to create employee',
-                'Internal Server Error',
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
+            handleServiceError(error, this.logger, { full_name: dto.full_name }, 'Failed to create employee');
         }
     }
 
@@ -54,12 +50,7 @@ export class EmployeeService {
             this.logger.info({ total, page, limit }, 'Fetched employees');
             return { data, total, page, limit };
         } catch (error) {
-            this.logger.error({ err: error }, 'Failed to fetch employees');
-            throw new CustomException(
-                'Failed to fetch employees',
-                'Internal Server Error',
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
+            handleServiceError(error, this.logger, { query }, 'Failed to fetch employees');
         }
     }
 
@@ -81,12 +72,7 @@ export class EmployeeService {
 
         } catch (error) {
             if (error instanceof CustomException) throw error;
-            this.logger.error({ err: error, id }, 'Failed to fetch employee');
-            throw new CustomException(
-                'Failed to fetch employee',
-                'Internal Server Error',
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
+            handleServiceError(error, this.logger, { id }, 'Failed to fetch employee');
         }
     }
 
@@ -106,12 +92,7 @@ export class EmployeeService {
             return await this.repo.save(employee);
         } catch (error) {
             if (error instanceof CustomException) throw error;
-            this.logger.error({ err: error, id }, 'Failed to update employee');
-            throw new CustomException(
-                'Failed to update employee',
-                'Internal Server Error',
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
+            handleServiceError(error, this.logger, { id, dto }, 'Failed to update employee');
         }
     }
 
@@ -129,12 +110,7 @@ export class EmployeeService {
             }
         } catch (error) {
             if (error instanceof CustomException) throw error;
-            this.logger.error({ err: error, id }, 'Failed to delete employee');
-            throw new CustomException(
-                'Failed to delete employee',
-                'Internal Server Error',
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
+            handleServiceError(error, this.logger, { id }, 'Failed to delete employee');
         }
     }
 }
