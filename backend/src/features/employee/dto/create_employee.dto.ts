@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsNumber, IsPositive, IsEmail, IsDateString, IsEnum, IsInt, Min, Max } from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber, IsPositive, IsEmail, IsDateString, IsEnum, IsInt, Min, Max, IsOptional } from 'class-validator';
 
 export enum EmploymentType {
   FULL_TIME = 'FULL_TIME',
@@ -20,17 +20,21 @@ export class CreateEmployeeDto {
   @IsNotEmpty()
   department: string;
 
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
   gender: string;
 
+  @IsOptional()
   @IsDateString()
   date_of_birth: string;
 
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
   phone_number: string;
 
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
   full_address: string;
@@ -56,6 +60,7 @@ export class CreateEmployeeDto {
   @IsEnum(EmploymentType)
   employment_type: EmploymentType;
 
+  @IsOptional()
   @IsNumber({ maxDecimalPlaces: 1 })
   @Min(1)
   @Max(5)
