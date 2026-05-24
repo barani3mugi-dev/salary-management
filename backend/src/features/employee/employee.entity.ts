@@ -2,54 +2,54 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 
 @Entity('employees')
 export class Employee {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @Column()
-    full_name: string;
+  @Column()
+  full_name: string;
 
-    @Column()
-    job_title: string;
+  @Column()
+  job_title: string;
 
-    @Column()
-    department: string;
+  @Column()
+  department: string;
 
-    @Column()
-    gender: string;
+  @Column({ nullable: true })
+  gender: string;
 
-    @Column()
-    age: number;
+  @Column({ type: 'date', nullable: true })
+  date_of_birth: string;
 
-    @Column()
-    phone_number: string;
+  @Column({ nullable: true })
+  phone_number: string;
 
-    @Column()
-    full_address: string;
+  @Column({ nullable: true })
+  full_address: string;
 
-    @Column()
-    country: string;
+  @Column()
+  country: string;
 
-    @Column('decimal')
-    salary: number;
+  @Column('decimal', { precision: 12, scale: 2 })
+  salary: number;
 
-    @Column()
-    currency: string;
+  @Column({ default: 'USD' })
+  currency: string;
 
-    @Column({ unique: true })
-    email: string;
+  @Column({ unique: true })
+  email: string;
 
-    @Column()
-    hire_date: string;
+  @Column({ type: 'date' })
+  hire_date: string;
 
-    @Column()
-    employment_type: string;
+  @Column({ default: 'Full-time' })
+  employment_type: string;
 
-    @Column('decimal')
-    performance_rating: number;
+  @Column('decimal', { precision: 3, scale: 1, nullable: true })
+  performance_rating: number;
 
-    @CreateDateColumn()
-    created_at: Date;
+  @CreateDateColumn()
+  created_at: Date;
 
-    @UpdateDateColumn()
-    updated_at: Date;
+  @UpdateDateColumn()
+  updated_at: Date;
 }

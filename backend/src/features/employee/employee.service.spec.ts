@@ -2,8 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EmployeeService } from './employee.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Employee } from './employee.entity';
-import { NotFoundException } from '@nestjs/common';
 import { EmploymentType } from './dto/create_employee.dto';
+import { getLoggerToken } from 'nestjs-pino';
+import { CustomException } from '../../utils/http_response';
 
 const mockEmployee = {
   id: '1',
@@ -29,7 +30,14 @@ const mockRepository = {
   delete: jest.fn(),
 };
 
-describe('EmployeesService', () => {
+const mockLogger = {
+  info: jest.fn(),
+  error: jest.fn(),
+  warn: jest.fn(),
+  debug: jest.fn(),
+};
+
+describe('EmployeeService', () => {
   let service: EmployeeService;
 
   beforeEach(async () => {
@@ -39,6 +47,10 @@ describe('EmployeesService', () => {
         {
           provide: getRepositoryToken(Employee),
           useValue: mockRepository,
+        },
+        {
+          provide: getLoggerToken(EmployeeService.name),
+          useValue: mockLogger,
         },
       ],
     }).compile();
@@ -58,12 +70,17 @@ describe('EmployeesService', () => {
         full_name: 'Arun Kumar',
         job_title: 'Software Engineer',
         department: 'Engineering',
+        date_of_birth: '1990-01-01',
+        gender: 'Male',
+        phone_number: '1234567890',
+        full_address: '123 Main St, City, Country',
         country: 'India',
         salary: 85000,
         currency: 'INR',
         email: 'arun@example.com',
         hire_date: '2024-01-01',
         employment_type: EmploymentType.FULL_TIME,
+        performance_rating: 4.5,
       });
 
       expect(result.full_name).toBe('Arun Kumar');
@@ -115,7 +132,7 @@ describe('EmployeesService', () => {
     it('should throw NotFoundException if employee not found', async () => {
       mockRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.findOne('999')).rejects.toThrow(NotFoundException);
+      await expect(service.findOne('999')).rejects.toThrow(CustomException);
     });
   });
 
@@ -137,7 +154,7 @@ describe('EmployeesService', () => {
       mockRepository.findOne.mockResolvedValue(null);
 
       await expect(service.update('999', { salary: 95000 }))
-        .rejects.toThrow(NotFoundException);
+        .rejects.toThrow(CustomException);
     });
   });
 
@@ -153,7 +170,7 @@ describe('EmployeesService', () => {
     it('should throw NotFoundException when deleting non-existent employee', async () => {
       mockRepository.delete.mockResolvedValue({ affected: 0 });
 
-      await expect(service.remove('999')).rejects.toThrow(NotFoundException);
+      await expect(service.remove('999')).rejects.toThrow(CustomException);
     });
   });
 });
