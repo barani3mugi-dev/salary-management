@@ -28,7 +28,7 @@ export class InsightsService {
                 .addSelect('MAX(employee.salary)', 'max')
                 .addSelect('AVG(employee.salary)', 'avg')
                 .addSelect('COUNT(*)', 'count')
-                .where('LOWER(employee.country) = :country', { country })
+                .where('LOWER(employee.country) = LOWER(:country)', { country })
                 .getRawOne();
 
             this.logger.info({ country }, 'Fetched country insights');
@@ -54,8 +54,8 @@ export class InsightsService {
                 .createQueryBuilder('employee')
                 .select('AVG(employee.salary)', 'avg')
                 .addSelect('COUNT(*)', 'count')
-                .where('LOWER(employee.country) = :country', { country })
-                .andWhere('employee.job_title = :title', { title })
+                .where('LOWER(employee.country) = LOWER(:country)', { country })
+                .andWhere('LOWER(employee.job_title) = LOWER(:title)', { title })
                 .getRawOne();
 
             this.logger.info({ title, country }, 'Fetched job title insights');
@@ -78,7 +78,7 @@ export class InsightsService {
                 .select('employee.department', 'department')
                 .addSelect('AVG(employee.salary)', 'avg')
                 .addSelect('COUNT(*)', 'count')
-                .where('LOWER(employee.country) = :country', { country })
+                .where('LOWER(employee.country) = LOWER(:country)', { country })
                 .groupBy('employee.department')
                 .getRawMany();
 
