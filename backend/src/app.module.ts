@@ -42,7 +42,7 @@ import { LoggerModule } from 'nestjs-pino/LoggerModule';
         type: 'postgres',
         url: configService.get('DATABASE_URL'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: configService.get('NODE_ENV') !== 'production',
+        synchronize: true,
         ssl: configService.get('NODE_ENV') === 'production'
           ? { rejectUnauthorized: false }
           : false,
