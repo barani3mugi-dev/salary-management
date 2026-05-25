@@ -1,3 +1,10 @@
 import { webcrypto } from 'crypto';
 
-(global as any).crypto = webcrypto;
+try {
+  if (!globalThis.crypto) {
+    Object.defineProperty(globalThis, 'crypto', {
+      value: webcrypto,
+      configurable: true,
+    });
+  }
+} catch {}
