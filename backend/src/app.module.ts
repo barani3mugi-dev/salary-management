@@ -10,18 +10,18 @@ import { LoggerModule } from 'nestjs-pino/LoggerModule';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-     LoggerModule.forRoot({
+    LoggerModule.forRoot({
       pinoHttp: {
         transport: process.env.NODE_ENV !== 'production'
           ? {
-              target: 'pino-pretty',
-              options: {
-                colorize: true,
-                singleLine: true,
-                translateTime: 'SYS:HH:MM:ss',
-                ignore: 'pid,hostname',
-              },
-            }
+            target: 'pino-pretty',
+            options: {
+              colorize: true,
+              singleLine: true,
+              translateTime: 'SYS:HH:MM:ss',
+              ignore: 'pid,hostname',
+            },
+          }
           : undefined,
         level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
         autoLogging: true,
@@ -35,22 +35,37 @@ import { LoggerModule } from 'nestjs-pino/LoggerModule';
         },
       },
     }),
+    //PROD
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        host: configService.get('DATABASE_HOST'),
-        port: Number(configService.get<string>('DATABASE_PORT', '5432')),
-        username: configService.get('DATABASE_USER'),
-        password: configService.get('DATABASE_PASSWORD'),
-        database: configService.get('DATABASE_NAME'),
+        url: configService.get('DATABASE_URL'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true,
+        synchronize: configService.get('NODE_ENV') !== 'production',
+        ssl: configService.get('NODE_ENV') === 'production'
+          ? { rejectUnauthorized: false }
+          : false,
       }),
       inject: [ConfigService],
     }),
+    //LOCAL
+    // TypeOrmModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   useFactory: (configService: ConfigService) => ({
+    //     type: 'postgres',
+    //     host: configService.get('DATABASE_HOST'),
+    //     port: Number(configService.get<string>('DATABASE_PORT', '5432')),
+    //     username: configService.get('DATABASE_USER'),
+    //     password: configService.get('DATABASE_PASSWORD'),
+    //     database: configService.get('DATABASE_NAME'),
+    //     entities: [__dirname + '/**/*.entity{.ts,.js}'],
+    //     synchronize: true,
+    //   }),
+    //   inject: [ConfigService],
+    // }),
     EmployeeModule,
     InsightsModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }
