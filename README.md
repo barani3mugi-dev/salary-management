@@ -4,9 +4,9 @@ A full-stack salary management application for HR Managers to manage 10,000 empl
 
 ## Live Demo
 
-- **Frontend**: https://salary-mgmt.vercel.app
-- **Backend API**: https://salary-mgmt-backend.up.railway.app
-- **Demo Video**: https://loom.com/share/your-video-link
+- **Frontend**: https://salary-management-ruby.vercel.app/
+- **Backend API**: https://salary-management-production-ec1b.up.railway.app
+- **Demo Video**: https://www.loom.com/share/df84f52e0705452bac5ac88d69286639
 
 ## Tech Stack
 
